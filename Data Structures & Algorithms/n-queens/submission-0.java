@@ -1,0 +1,71 @@
+class Solution {
+    public List<List<String>> solveNQueens(int n) {
+        
+        List<List<String>> result = new ArrayList<>();
+
+        char[][] board = new char[n][n];
+
+        for(int i = 0;i<n;i++){
+            Arrays.fill(board[i],'.');
+        }
+
+        // Track occupied columns and diagonals
+        boolean[] columns = new boolean[n];
+        boolean[] diagonal1 = new boolean[2 * n - 1];
+        boolean[] diagonal2 = new boolean[2 * n - 1];
+
+        backtrack(0, n, board, columns, diagonal1, diagonal2, result);
+
+        return result;
+    }
+
+    private void backtrack(int row, int n, char[][] board,
+     boolean[] columns, boolean[] diagonal1, boolean[] diagonal2,
+     List<List<String>> result){
+
+        if(row == n){
+            result.add(createBoard(board));
+            return;
+        }
+
+        // Try every column in the current row
+        for (int col = 0; col < n; col++) {
+
+            int diag1 = row - col + n - 1;
+            int diag2 = row + col;
+
+            // Check if position is unsafe
+            if (columns[col] || diagonal1[diag1] || diagonal2[diag2]) {
+                continue;
+            }
+
+            // Choose
+            board[row][col] = 'Q';
+            columns[col] = true;
+            diagonal1[diag1] = true;
+            diagonal2[diag2] = true;
+
+            // Explore
+            backtrack(row + 1, n, board,
+                      columns, diagonal1, diagonal2, result);
+
+            // Backtrack / Undo
+            board[row][col] = '.';
+            columns[col] = false;
+            diagonal1[diag1] = false;
+            diagonal2[diag2] = false;
+        }
+    }
+
+    private List<String> createBoard(char[][] board) {
+
+        List<String> currentBoard = new ArrayList<>();
+
+        for (char[] row : board) {
+            currentBoard.add(new String(row));
+        }
+
+        return currentBoard;
+    
+    }
+}
